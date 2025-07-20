@@ -1,0 +1,20 @@
+{
+  "name": "company-data-finder",
+  "version": "1.0.0",
+  "description": "Full-stack company data finder application",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build": "cd frontend && npm install && npm run build",
+    "dev:frontend": "cd frontend && npm run dev:frontend",
+    "dev:backend": "cd backend && python main.py",
+    "install:frontend": "cd frontend && npm install",
+    "install:backend": "cd backend && pip install -r requirements.txt",
+    "install": "npm run install:backend && npm run install:frontend"
+  },
+  "keywords": ["company", "data", "finder", "react", "fastapi"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
