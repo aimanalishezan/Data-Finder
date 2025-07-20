@@ -162,6 +162,18 @@ export default function CompanyTable({ companies, isLoading, error }: CompanyTab
               </th>
               <th
                 scope="col"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                onClick={() => handleSort('revenue')}
+              >
+                <div className="group inline-flex">
+                  Revenue (€)
+                  <span className="ml-2 flex-none rounded text-gray-400 group-hover:visible">
+                    {getSortIndicator('revenue') || '↕'}
+                  </span>
+                </div>
+              </th>
+              <th
+                scope="col"
                 className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
               >
                 Registered
@@ -189,6 +201,11 @@ export default function CompanyTable({ companies, isLoading, error }: CompanyTab
                 </td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                   {company.company_type || '-'}
+                </td>
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  {company.revenue 
+                    ? `€${company.revenue.toLocaleString()}` 
+                    : '-'}
                 </td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                   {company.registration_date 

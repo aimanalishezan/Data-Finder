@@ -45,6 +45,7 @@ class CompanyBase(BaseModel):
     company_type: Optional[str] = None
     address: Optional[str] = None
     registration_date: Optional[date] = None
+    revenue: Optional[float] = None
 
 class CompanyCreate(CompanyBase):
     pass
@@ -66,9 +67,14 @@ async def root():
 async def get_companies(
     skip: int = 0,
     limit: int = 100,
+    company_name: Optional[str] = None,
+    business_id: Optional[str] = None,
     industry: Optional[str] = None,
+    location: Optional[str] = None,
     city: Optional[str] = None,
     company_type: Optional[str] = None,
+    min_revenue: Optional[float] = None,
+    max_revenue: Optional[float] = None,
     min_date: Optional[date] = None,
     max_date: Optional[date] = None,
     search: Optional[str] = None
@@ -87,9 +93,21 @@ async def get_companies(
     params = []
     
     # Add filters
+    if company_name:
+        query += " AND LOWER(name) LIKE LOWER(%s)" if not USE_SQLITE else " AND LOWER(name) LIKE LOWER(?)"
+        params.append(f"%{company_name}%")
+    
+    if business_id:
+        query += " AND LOWER(business_id) LIKE LOWER(%s)" if not USE_SQLITE else " AND LOWER(business_id) LIKE LOWER(?)"
+        params.append(f"%{business_id}%")
+    
     if industry:
         query += " AND LOWER(industry) LIKE LOWER(%s)" if not USE_SQLITE else " AND LOWER(industry) LIKE LOWER(?)"
         params.append(f"%{industry}%")
+    
+    if location:
+        query += " AND (LOWER(city) LIKE LOWER(%s) OR LOWER(address) LIKE LOWER(%s))" if not USE_SQLITE else " AND (LOWER(city) LIKE LOWER(?) OR LOWER(address) LIKE LOWER(?))"
+        params.extend([f"%{location}%", f"%{location}%"])
     
     if city:
         query += " AND LOWER(city) LIKE LOWER(%s)" if not USE_SQLITE else " AND LOWER(city) LIKE LOWER(?)"
@@ -98,6 +116,14 @@ async def get_companies(
     if company_type:
         query += " AND company_type = %s" if not USE_SQLITE else " AND company_type = ?"
         params.append(company_type)
+    
+    if min_revenue:
+        query += " AND revenue >= %s" if not USE_SQLITE else " AND revenue >= ?"
+        params.append(min_revenue)
+    
+    if max_revenue:
+        query += " AND revenue <= %s" if not USE_SQLITE else " AND revenue <= ?"
+        params.append(max_revenue)
     
     if min_date:
         query += " AND registration_date >= %s" if not USE_SQLITE else " AND registration_date >= ?"
@@ -183,9 +209,14 @@ def get_company_by_id(company_id: int):
 
 @app.get("/export/", response_class=FileResponse)
 async def export_companies(
+    company_name: Optional[str] = None,
+    business_id: Optional[str] = None,
     industry: Optional[str] = None,
+    location: Optional[str] = None,
     city: Optional[str] = None,
     company_type: Optional[str] = None,
+    min_revenue: Optional[float] = None,
+    max_revenue: Optional[float] = None,
     min_date: Optional[date] = None,
     max_date: Optional[date] = None,
     search: Optional[str] = None
@@ -204,9 +235,21 @@ async def export_companies(
     params = []
     
     # Add filters (same as get_companies)
+    if company_name:
+        query += " AND LOWER(name) LIKE LOWER(%s)" if not USE_SQLITE else " AND LOWER(name) LIKE LOWER(?)"
+        params.append(f"%{company_name}%")
+    
+    if business_id:
+        query += " AND LOWER(business_id) LIKE LOWER(%s)" if not USE_SQLITE else " AND LOWER(business_id) LIKE LOWER(?)"
+        params.append(f"%{business_id}%")
+    
     if industry:
         query += " AND LOWER(industry) LIKE LOWER(%s)" if not USE_SQLITE else " AND LOWER(industry) LIKE LOWER(?)"
         params.append(f"%{industry}%")
+    
+    if location:
+        query += " AND (LOWER(city) LIKE LOWER(%s) OR LOWER(address) LIKE LOWER(%s))" if not USE_SQLITE else " AND (LOWER(city) LIKE LOWER(?) OR LOWER(address) LIKE LOWER(?))"
+        params.extend([f"%{location}%", f"%{location}%"])
     
     if city:
         query += " AND LOWER(city) LIKE LOWER(%s)" if not USE_SQLITE else " AND LOWER(city) LIKE LOWER(?)"
@@ -215,6 +258,14 @@ async def export_companies(
     if company_type:
         query += " AND company_type = %s" if not USE_SQLITE else " AND company_type = ?"
         params.append(company_type)
+    
+    if min_revenue:
+        query += " AND revenue >= %s" if not USE_SQLITE else " AND revenue >= ?"
+        params.append(min_revenue)
+    
+    if max_revenue:
+        query += " AND revenue <= %s" if not USE_SQLITE else " AND revenue <= ?"
+        params.append(max_revenue)
     
     if min_date:
         query += " AND registration_date >= %s" if not USE_SQLITE else " AND registration_date >= ?"

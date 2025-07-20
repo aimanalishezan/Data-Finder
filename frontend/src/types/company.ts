@@ -27,6 +27,9 @@ export interface Company {
   /** Date of company registration (ISO format) */
   registration_date?: string;
   
+  /** Company revenue in euros */
+  revenue?: number;
+  
   /** Date when the record was created (ISO format) */
   created_at?: string;
   

@@ -12,9 +12,14 @@ import { useAuth } from '../context/AuthContext';
 export default function Dashboard() {
   const [filters, setFilters] = useState({
     search: '',
+    company_name: '',
+    business_id: '',
     industry: '',
+    location: '',
     city: '',
     company_type: '',
+    min_revenue: '',
+    max_revenue: '',
     min_date: '',
     max_date: '',
   });
@@ -57,9 +62,14 @@ export default function Dashboard() {
   const handleResetFilters = () => {
     setFilters({
       search: '',
+      company_name: '',
+      business_id: '',
       industry: '',
+      location: '',
       city: '',
       company_type: '',
+      min_revenue: '',
+      max_revenue: '',
       min_date: '',
       max_date: '',
     });
